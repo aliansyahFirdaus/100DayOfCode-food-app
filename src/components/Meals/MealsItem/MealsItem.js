@@ -1,13 +1,11 @@
 import React from "react";
+import converterCurrency from "../../../helper/currencyHelper";
 import MealForm from "./MealForm";
 import styles from "./MealsItem.module.css";
 
 export default function MealsItem(props) {
   const price = props.meal.price * 1000;
-  const priceFormat = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  }).format(price);
+  const priceFormat = converterCurrency(price);
 
   return (
     <li className={styles.meal}>
