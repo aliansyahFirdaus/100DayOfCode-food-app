@@ -7,22 +7,25 @@ const defaultCartReducer = {
 };
 
 const cartReducer = (state, action) => {
+  const existMeal = state.meals.some((meal) => meal.id === action.meal.id);
+
+  let mealIndex = existMeal
+    ? state.meals.findIndex((meal) => meal.id === action.meal.id)
+    : false;
+
+  let newMeals = [];
+
   switch (action.type) {
     case "ADD":
-
-      const existMeal = state.meals.some((meal) => meal.id === action.meal.id)
-      let newMeals = []
-
-      if(existMeal){
-        const mealIndex = state.meals.findIndex((meal) => meal.id === action.meal.id)
+      if (mealIndex !== false) {
         const newMealAmount = {
           ...state.meals[mealIndex],
-          amount: state.meals[mealIndex].amount + action.meal.amount
-        }
-        state.meals[mealIndex] = newMealAmount
-        newMeals = [...state.meals]
+          amount: state.meals[mealIndex].amount + action.meal.amount,
+        };
+        state.meals[mealIndex] = newMealAmount;
+        newMeals = [...state.meals];
       } else {
-        newMeals = [...state.meals, action.meal]
+        newMeals = [...state.meals, action.meal];
       }
 
       return {
@@ -31,11 +34,27 @@ const cartReducer = (state, action) => {
       };
 
     case "DEL":
-      const newItem = state.meals.filter((meal) => meal.id !== action.id);
+      if (mealIndex !== false) {
+        if (state.meals[mealIndex].amount > 1) {
+          const newMeal = {
+            ...state.meals[mealIndex],
+            amount: state.meals[mealIndex].amount - 1,
+          };
+
+          state.meals[mealIndex] = newMeal;
+
+          console.log(state.meals)
+
+          newMeals = [...state.meals];
+        } else {
+          newMeals = state.meals.filter((meal) => meal.id !== action.meal.id);
+          console.log(newMeals)
+        }
+      }
+
       return {
-        meals: [...newItem],
-        totalAmount:
-          state.totalAmount - state.meals.find((meal) => meal.id === id).price,
+        meals: [...newMeals],
+        totalAmount: state.totalAmount - state.meals[mealIndex].price,
       };
 
     default:
@@ -55,7 +74,7 @@ export default function CartProvider(props) {
   };
 
   const deleteMealHandler = (id) => {
-    dispatchCartMeals({ type: "DEL", id });
+    dispatchCartMeals({ type: "DEL", meal: { id } });
     // return id;
   };
 
