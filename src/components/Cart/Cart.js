@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import converterCurrency from "../../helper/currencyHelper";
+import CartContex from "../../store/contex-cart";
 import Modal from "../UI/Modal";
 import styles from "./Cart.module.css";
+import CartItem from "./CartItem"
 
 const DUMMY_MEALS = [
   {
@@ -19,18 +21,17 @@ const DUMMY_MEALS = [
 ];
 
 export default function Cart(props) {
-  let total = 0;
+  const cartCtx = useContext(CartContex)
 
   const mealOnCo = (
     <ul className={styles["cart-items"]}>
-      {DUMMY_MEALS.map((meal) => {
-        total += meal.price;
-        return <li key={meal.id}>{meal.name}</li>;
+      {cartCtx.meals.map((meal) => {
+        return <CartItem key={meal.id} meal={meal} />;
       })}
     </ul>
   );
 
-  let totalConvert = converterCurrency(total);
+  let totalConvert = converterCurrency(cartCtx.totalAmount);
 
   return (
     <Modal>

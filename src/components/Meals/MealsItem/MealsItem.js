@@ -6,9 +6,7 @@ import styles from "./MealsItem.module.css";
 
 export default function MealsItem(props) {
   const cartCTX = useContext(CartContex);
-
-  const price = props.meal.price * 1000;
-  const priceFormat = converterCurrency(price);
+  const priceFormat = converterCurrency(props.meal.price);
 
   const addItems = (amount) => {
     cartCTX.addMeal({
