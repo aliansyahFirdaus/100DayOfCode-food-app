@@ -9,8 +9,24 @@ const defaultCartReducer = {
 const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD":
+
+      const existMeal = state.meals.some((meal) => meal.id === action.meal.id)
+      let newMeals = []
+
+      if(existMeal){
+        const mealIndex = state.meals.findIndex((meal) => meal.id === action.meal.id)
+        const newMealAmount = {
+          ...state.meals[mealIndex],
+          amount: state.meals[mealIndex].amount + action.meal.amount
+        }
+        state.meals[mealIndex] = newMealAmount
+        newMeals = [...state.meals]
+      } else {
+        newMeals = [...state.meals, action.meal]
+      }
+
       return {
-        meals: [...state.meals, action.meal],
+        meals: [...newMeals],
         totalAmount: state.totalAmount + action.meal.price * action.meal.amount,
       };
 

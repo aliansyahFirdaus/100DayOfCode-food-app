@@ -6,6 +6,7 @@ import styles from "./HeaderCheckoutButton.module.css";
 
 export default function HeaderCheckoutButton(props) {
   const cartCtx = useContext(CartContex);
+  // console.log(cartCtx)
 
   const totalItemsCart = cartCtx.meals.reduce((acc, item) => {
     return acc + item.amount;
