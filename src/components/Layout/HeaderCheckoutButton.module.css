@@ -1,5 +1,5 @@
 .button {
-    cursor: pointer;
+    cursor: pointer !important;
     font: inherit;
     border: none;
     background-color: #4d1601;

@@ -18,7 +18,7 @@ const DUMMY_MEALS = [
   },
 ];
 
-export default function Cart() {
+export default function Cart(props) {
   let total = 0;
 
   const mealOnCo = (
@@ -40,7 +40,7 @@ export default function Cart() {
         <span>{totalConvert}</span>
       </div>
       <div className={styles.actions}>
-        <button className={styles["button--cancel"]}>Close</button>
+        <button className={styles["button--cancel"]} onClick={props.onClose}>Close</button>
         <button className={styles["button--payment"]}>Payment</button>
       </div>
     </Modal>
