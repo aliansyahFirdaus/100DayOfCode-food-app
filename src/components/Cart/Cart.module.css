@@ -39,6 +39,15 @@
   .actions .button--cancel {
     color: #8a2b06;
   }
+
+  .actions button:disabled,
+  .actions button:disabled:hover,
+  .actions button:disabled:active{
+    background-color: rgb(231, 231, 231);
+    border: 0;
+    color: rgb(211, 211, 211);
+    cursor: not-allowed;
+  }
   
   .actions .button--payment {
     background-color: #8a2b06;
