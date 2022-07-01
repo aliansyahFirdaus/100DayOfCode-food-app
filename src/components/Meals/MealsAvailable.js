@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../UI/Card";
 import styles from "./MealsAvailable.module.css";
 import MealsItem from "./MealsItem/MealsItem";
@@ -31,14 +31,66 @@ const DUMMY_MEALS = [
 ];
 
 export default function MealsAvailable() {
-  const listOfMeals = DUMMY_MEALS.map((meal) => {
-    return <MealsItem key={meal.id} meal={meal} />;
-  });
-  return (
-    <section className={styles.meals}>
-      <Card>
-        <ul>{listOfMeals}</ul>
-      </Card>
-    </section>
-  );
+  const [meals, setMeals] = useState([]);
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetch(
+        "https://react-food-app-practice-default-rtdb.firebaseio.com/meals.josn"
+      );
+      const responseData = await response.json();
+
+      const loadData = [];
+
+      let i = 1;
+      for (const data of responseData) {
+        loadData.push({
+          id: `m${i}`,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+        });
+        i += 1;
+      }
+
+      setMeals(loadData);
+      setStatus("fetched");
+    };
+
+    fetchUser().catch((err) => setStatus(err.message));
+  }, []);
+
+  switch (status) {
+    case "loading":
+      return (
+        <section
+          style={{ textAlign: "center", marginTop: 100, color: "white" }}
+        >
+          <h1>Loading...</h1>
+        </section>
+      );
+
+    case "fetched":
+      const listOfMeals = meals.map((meal) => {
+        return <MealsItem key={meal.id} meal={meal} />;
+      });
+
+      return (
+        <section className={styles.meals}>
+          <Card>
+            <ul>{listOfMeals}</ul>
+          </Card>
+        </section>
+      );
+
+    default:
+      return (
+        <section
+          style={{ textAlign: "center", marginTop: 100, color: "white" }}
+        >
+          <h1>{status}</h1>
+        </section>
+      );
+  }
 }
