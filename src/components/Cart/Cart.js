@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import converterCurrency from "../../helper/currencyHelper";
 import CartContex from "../../store/contex-cart";
 import Checkout from "../Checkout/Checkout";
@@ -8,6 +8,8 @@ import CartItem from "./CartItem";
 
 export default function Cart(props) {
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [didSubmitted, setDidSubmitted] = useState(false);
 
   const cartCtx = useContext(CartContex);
 
@@ -35,17 +37,39 @@ export default function Cart(props) {
   );
 
   const sendData = (data) => {
-    fetch("https://react-food-app-practice-default-rtdb.firebaseio.com/orders.json", {
-      method: "POST",
-      body: JSON.stringify(data)
-    })
-  }
+    setIsSubmitted(true);
+    fetch(
+      "https://react-food-app-practice-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    ).then(() => {
+      setDidSubmitted(true);
+      setIsSubmitted(false);
+      cartCtx.clearCart()
+    });
+  };
 
   let totalConvert = converterCurrency(cartCtx.totalAmount);
 
-  return (
-    <Modal>
+  const modalContentSucess = (
+    <Fragment>
+      <p>Success to Order</p>
+      <div className={styles.actions}>
+        <button className={styles.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </Fragment>
+  );
+
+  const modalContentSubmmiting = <p>Process your Order</p>;
+
+  const modalContentDefault = (
+    <Fragment>
       {mealOnCo}
+
       <div className={styles.total}>
         <span>Total Amount</span>
         <span>{totalConvert}</span>
@@ -69,7 +93,21 @@ export default function Cart(props) {
         </div>
       )}
 
-      {isCheckout && <Checkout onClose={props.onClose} onSubmitOrder={sendData} coData={cartCtx.meals} />}
+      {isCheckout && (
+        <Checkout
+          onClose={props.onClose}
+          onSubmitOrder={sendData}
+          coData={cartCtx.meals}
+        />
+      )}
+    </Fragment>
+  );
+
+  return (
+    <Modal>
+      {!isSubmitted && !didSubmitted && modalContentDefault}
+      {isSubmitted && !didSubmitted && modalContentSubmmiting}
+      {!isSubmitted && didSubmitted && modalContentSucess}
     </Modal>
   );
 }

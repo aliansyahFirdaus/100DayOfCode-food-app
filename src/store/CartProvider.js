@@ -7,6 +7,9 @@ const defaultCartReducer = {
 };
 
 const cartReducer = (state, action) => {
+
+  if(action.type === "RESET") return defaultCartReducer
+
   const existMeal = state.meals.some((meal) => meal.id === action.meal.id);
 
   let mealIndex = existMeal
@@ -43,12 +46,12 @@ const cartReducer = (state, action) => {
 
           state.meals[mealIndex] = newMeal;
 
-          console.log(state.meals)
+          console.log(state.meals);
 
           newMeals = [...state.meals];
         } else {
           newMeals = state.meals.filter((meal) => meal.id !== action.meal.id);
-          console.log(newMeals)
+          console.log(newMeals);
         }
       }
 
@@ -78,11 +81,16 @@ export default function CartProvider(props) {
     // return id;
   };
 
+  const resetCart = () => {
+    dispatchCartMeals({type: "RESET"})
+  }
+
   const cartContex = {
     meals: cartsMeals.meals,
     totalAmount: cartsMeals.totalAmount,
     addMeal: addMealHandler,
     deleteMeal: deleteMealHandler,
+    clearCart: resetCart
   };
 
   return (
