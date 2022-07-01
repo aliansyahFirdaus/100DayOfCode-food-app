@@ -34,9 +34,14 @@ export default function Cart(props) {
     </ul>
   );
 
-  let totalConvert = converterCurrency(cartCtx.totalAmount);
+  const sendData = (data) => {
+    fetch("https://react-food-app-practice-default-rtdb.firebaseio.com/orders.json", {
+      method: "POST",
+      body: JSON.stringify(data)
+    })
+  }
 
-  console.log(cartCtx.meals.length)
+  let totalConvert = converterCurrency(cartCtx.totalAmount);
 
   return (
     <Modal>
@@ -64,7 +69,7 @@ export default function Cart(props) {
         </div>
       )}
 
-      {isCheckout && <Checkout onClose={props.onClose} />}
+      {isCheckout && <Checkout onClose={props.onClose} onSubmitOrder={sendData} coData={cartCtx.meals} />}
     </Modal>
   );
 }
